@@ -1,0 +1,1 @@
+/Users/irenefabris/Documents/GitHub/ETHSF-scorebox-smartcontracts/contract/target/wasm32-unknown-unknown/release/contract.wasm: /Users/irenefabris/Documents/GitHub/ETHSF-scorebox-smartcontracts/contract/src/lib.rs
