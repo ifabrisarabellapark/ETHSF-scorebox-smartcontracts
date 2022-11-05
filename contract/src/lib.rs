@@ -15,6 +15,14 @@ pub struct UserOn {
     pub description: Vec<u8>,
 }
 
+
+#[derive(Serialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct UserOff {
+    pub score: u16,
+    pub description: String,
+}
+
 #[derive(BorshStorageKey, BorshSerialize)]
 pub enum StorageKey {
     Accounts { account_hash: Vec<u8> }
@@ -26,6 +34,12 @@ pub enum StorageKey {
 pub struct Contract {
     owner_id: AccountId,
     records: LookupMap<String, Vector<UserOn>>
+}
+
+#[derive(Serialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct ScoreVec {
+    scores: Vec<UserOff>
 }
 
 #[near_bindgen]
@@ -80,8 +94,25 @@ impl Contract {
         Promise::new(beneficiary).transfer(amount);
     }
 
+    // this is a view method
+    pub fn get_scores(&self, account_id: String) -> ScoreVec  {
 
-    pub fn get_scores(&mut self) {
-        //WIP
+        let pedigree = self.records.get(&account_id);
+        if pedigree {
+            None => {env::panic_str("No credit scores for thsi user")}
+            Some(z) => {
+                let record = vec![];
+                for x in z.iter() {
+                    let entry = UserOff {
+                        score: x.score,
+                        description: String::from_utf8(x.description).unwrap(),
+                    };
+                    record.push(entry);
+                };
+                return ScoreVec {
+                    scores: record
+                }
+            }
+        }
     }
 }
