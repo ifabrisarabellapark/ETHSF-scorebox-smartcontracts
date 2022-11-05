@@ -94,14 +94,16 @@ impl Contract {
         Promise::new(beneficiary).transfer(amount);
     }
 
+
+
     // this is a view method
     pub fn get_scores(&self, account_id: String) -> ScoreVec  {
 
         let pedigree = self.records.get(&account_id);
-        if pedigree {
-            None => {env::panic_str("No credit scores for thsi user")}
+        match pedigree {
+            None => {env::panic_str("No credit scores for thsi user");}
             Some(z) => {
-                let record = vec![];
+                let mut record = vec![];
                 for x in z.iter() {
                     let entry = UserOff {
                         score: x.score,
