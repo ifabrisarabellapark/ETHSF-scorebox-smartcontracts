@@ -1,20 +1,40 @@
-use near_sdk::{borsh::{self, BorshDeserialize, BorshSerialize}};
-use near_sdk::{log, near_bindgen};
+use near_sdk::{
+    collections::{LookupMap, Vector},
+    borsh::{self, BorshDeserialize, BorshSerialize},
+    serde::{Deserialize, Serialize},
+    PanicOnDefault, BorshStorageKey, AccountId, 
+    log, env, near_bindgen, Balance, Promise
+};
 
-const DEFAULT_MESSAGE: &str = "Hello";
+
+// user's score - onchain
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct UserOn {
+    pub score: u16,
+    pub description: Vec<u8>,
+}
+
+#[derive(BorshStorageKey, BorshSerialize)]
+pub enum StorageKey {
+    Accounts { account_hash: Vec<u8> }
+}
 
 // Define the contract structure
 #[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(PanicOnDefault, BorshDeserialize, BorshSerialize)]
 pub struct Contract {
-    greeting: String,
+    owner_id: AccountId,
+    records: LookupMap<String, Vector<UserOn>>
 }
 
-impl Default for Contract {
-    // The default trait with which to initialize the contract
-    fn default() -> Self {
+#[near_bindgen]
+impl Contract {
+    #[init] // implies you MUST call init() to initialize contract
+    pub fn init(owner_id: AccountId) -> Self {
         Self {
-            greeting: DEFAULT_MESSAGE.to_string(),
+            owner_id,
+            records: LookupMap::new(b"m"),
         }
     }
 }
@@ -22,38 +42,46 @@ impl Default for Contract {
 // Implement the contract structure
 #[near_bindgen]
 impl Contract {
-    // Public: Returns the stored greeting, defaulting to 'Hello'
-    pub fn get_greeting(&self) -> String {
-        return self.greeting.clone();
+
+    pub fn upload_score(
+        &mut self,
+        score: u16,
+        description: String,
+        beneficiary: AccountId,
+        amount: Balance
+    ) {
+
+        let account_id: String = String::from(env::signer_account_id());
+        let novel = UserOn {
+            score: score,
+            description: description.as_bytes().to_vec(),
+        };
+
+        let pedigree = self.records.get(&account_id);
+        match pedigree {
+            None => {
+                log!{"New user uploaded a score"};
+                let mut v = Vector::new(
+                    StorageKey::Accounts {account_hash: env::sha256(account_id.as_bytes()) }
+                );
+                v.push(&novel);
+                // update the score count iff you succeeded writing it to blockchain`
+                self.records.insert(&account_id, &v);
+                log!("Score live on NEAR!");
+            }
+            Some(v) => {
+                log!("A returning user uploaded a score");
+                let mut w = v;
+                w.push(&novel);
+                log!("Score live on NEAR!");
+            }
+        }
+        //transfer an 'amount' of NEARs 'to' an account id
+        Promise::new(beneficiary).transfer(amount);
     }
 
-    // Public: Takes a greeting, such as 'howdy', and records it
-    pub fn set_greeting(&mut self, greeting: String) {
-        // Record a log permanently to the blockchain!
-        log!("Saving greeting {}", greeting);
-        self.greeting = greeting;
+
+    pub fn get_scores(&mut self) {
+        //WIP
     }
 }
-
-// /*
-//  * The rest of this file holds the inline tests for the code above
-//  * Learn more about Rust tests: https://doc.rust-lang.org/book/ch11-01-writing-tests.html
-//  */
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn get_default_greeting() {
-//         let contract = Contract::default();
-//         // this test did not call set_greeting so should return the default "Hello" greeting
-//         assert_eq!(contract.get_greeting(), "Hello".to_string());
-//     }
-
-//     #[test]
-//     fn set_then_get_greeting() {
-//         let mut contract = Contract::default();
-//         contract.set_greeting("howdy".to_string());
-//         assert_eq!(contract.get_greeting(), "howdy".to_string());
-//     }
-// }
