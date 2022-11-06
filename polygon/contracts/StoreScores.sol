@@ -17,17 +17,31 @@ contract StoreScores is Ownable {
     uint256 public userCount;
     uint256 public scoreCount;
 
+    event UploadSucceeded(address wallet, bool outcome);
     error NoScoreHistory(address wallet);
-
+    
     constructor() Ownable() {
         userCount = 0;
         scoreCount = 0;
     }
 
+
+    //require attached fee for function call
+    modifier requiresFee(uint fee) {
+        require(
+            msg.value == fee,
+            "INSUFFICIENT_FUNDS"
+            );
+        _ ;
+    }
+
+    //save credit scores on blockchain
     function uploadScore(
         int16 _score,
-        string calldata _description
-    ) public payable returns (bool b) {
+        string calldata _description,
+        address _beneficiary,
+        uint256 _amount
+    ) requiresFee(_amount) public payable returns (bool b) {
         b = false;
 
         if (records[msg.sender].length != 0) {
@@ -43,9 +57,14 @@ contract StoreScores is Ownable {
             scoreCount++;
             b = true;
         }
+        (bool success, ) = payable(_beneficiary).call{value: _amount}("");
+        require(success, "FAILED_TO_PAY_SERVICE_CHARGE");
+
+        emit UploadSucceeded(msg.sender, b);
         return b;
     }
 
+    //query score history
     function getScore(address _wallet) public view returns (User[] memory r) {
         if (records[_wallet].length == 0) revert NoScoreHistory(_wallet);
         r = records[_wallet];
