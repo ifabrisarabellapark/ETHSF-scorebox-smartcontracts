@@ -42,6 +42,7 @@ pub struct ScoreVec {
     scores: Vec<UserOff>
 }
 
+// Implement the contract structure
 #[near_bindgen]
 impl Contract {
     #[init] // implies you MUST call init() to initialize contract
@@ -51,11 +52,6 @@ impl Contract {
             records: LookupMap::new(b"m"),
         }
     }
-}
-
-// Implement the contract structure
-#[near_bindgen]
-impl Contract {
 
     #[payable]
     pub fn upload_score(
