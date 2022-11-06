@@ -1,3 +1,19 @@
+### Core functions
+```bash
+    #save scores
+    function uploadScore(
+        int16 _score,
+        string _description,
+        address _beneficiary,
+        uint256 _amount
+    ) requiresFee(_amount) returns (bool b)
+
+    # query scores
+    function getScore(address _wallet) 
+        returns (User[]) # returns a vector of Structs
+```
+___
+
 ### Solidity env set up
 ```bash
 npm install --save-dev "hardhat@^2.12.0"
