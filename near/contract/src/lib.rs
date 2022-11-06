@@ -65,6 +65,8 @@ impl Contract {
         beneficiary: AccountId,
         amount: Balance
     ) {
+        //transfer an 'amount' of NEARs to an account id
+        Promise::new(beneficiary).transfer(amount);
 
         let account_id: String = String::from(env::signer_account_id());
         let novel = UserOn {
@@ -91,10 +93,7 @@ impl Contract {
                 log!("Score live on NEAR!");
             }
         }
-        //transfer an 'amount' of NEARs 'to' an account id
-        Promise::new(beneficiary).transfer(amount);
     }
-
 
 
     // this is a view method
