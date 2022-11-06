@@ -9,3 +9,33 @@ With Brownie
 ```bash
 pip install eth-brownie
 ```
+
+### Deploy
+```bash
+brownie run deploy.py --network polygon-test
+```
+
+
+### Interact
+```bash
+# import accounts
+brownie accounts list
+brownie accounts new josi  # enter josi's private key and a password
+brownie accounts list
+
+
+# connect to blockchain
+brownie console --network polygon-test                                
+    network.is_connected()                                             
+    network.show_active()                                              
+
+
+# interact with contract
+    sc = StoreScores.at('yourcontractaddress')                        
+    nene = accounts.load('nene')                                      
+    josi = accounts.load('josi')                                     
+    sc.userCount()                                                   
+    sc.uploadScore(501, 'Yo!', nene, 3, {'from':josi, 'value': 3}) 
+    sc.getScore(josi, {'from': josi})                                  
+    ```
+> `nene` and `josi` are an alias
