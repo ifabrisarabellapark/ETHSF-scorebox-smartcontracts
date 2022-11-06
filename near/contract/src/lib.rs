@@ -57,6 +57,7 @@ impl Contract {
 #[near_bindgen]
 impl Contract {
 
+    #[payable]
     pub fn upload_score(
         &mut self,
         score: u16,
