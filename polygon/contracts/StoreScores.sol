@@ -24,20 +24,20 @@ contract StoreScores is Ownable {
 
     function uploadScore(
         int16 _score,
-        string calldata _description,
+        string calldata _description
     ) public payable returns (bool b) {
         b = false;
 
         if (records[msg.sender].length != 0) {
-            //new user
+            //if it's a returning user, append new score to existing mapping
             records[msg.sender].push(User(_score, _description));
-            userCount++;
             scoreCount++;
             b = true;
         } else {
-            //returning user
+            //if it's a new user, add new score entry to mapping
             User[] storage x = records[msg.sender];
             x.push(User(_score, _description));
+            userCount++;
             scoreCount++;
             b = true;
         }
