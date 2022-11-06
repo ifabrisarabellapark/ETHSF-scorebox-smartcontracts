@@ -17,6 +17,8 @@ contract StoreScores is Ownable {
     uint256 public userCount;
     uint256 public scoreCount;
 
+    error NoScoreHistory(address wallet);
+
     constructor() Ownable() {
         userCount = 0;
         scoreCount = 0;
@@ -42,5 +44,11 @@ contract StoreScores is Ownable {
             b = true;
         }
         return b;
+    }
+
+    function getScore(address _wallet) public view returns (User[] memory r) {
+        if (records[_wallet].length == 0) revert NoScoreHistory(_wallet);
+        r = records[_wallet];
+        r;
     }
 }
