@@ -17,7 +17,7 @@ contract StoreScores is Ownable {
     uint256 public userCount;
     uint256 public scoreCount;
 
-    constructor() {
+    constructor() Ownable() {
         userCount = 0;
         scoreCount = 0;
     }
@@ -25,11 +25,22 @@ contract StoreScores is Ownable {
     function uploadScore(
         int16 _score,
         string calldata _description,
-        address _beneficiary,
-        uint256 _amount
     ) public payable returns (bool b) {
         b = false;
-        // ...
+
+        if (records[msg.sender].length != 0) {
+            //new user
+            records[msg.sender].push(User(_score, _description));
+            userCount++;
+            scoreCount++;
+            b = true;
+        } else {
+            //returning user
+            User[] storage x = records[msg.sender];
+            x.push(User(_score, _description));
+            scoreCount++;
+            b = true;
+        }
         return b;
     }
 }
