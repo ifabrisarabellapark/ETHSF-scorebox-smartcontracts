@@ -15,7 +15,6 @@ pub struct UserOn {
     pub description: Vec<u8>,
 }
 
-
 #[derive(Serialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct UserOff {
@@ -60,7 +59,7 @@ impl Contract {
         description: String,
         beneficiary: AccountId,
         amount: Balance
-    ) {
+    ) -> bool {
         //transfer an 'amount' of NEARs to an account id
         Promise::new(beneficiary).transfer(amount);
 
@@ -86,9 +85,12 @@ impl Contract {
                 log!("A returning user uploaded a score");
                 let mut w = v;
                 w.push(&novel);
+                self.records.insert(&account_id, &w);
                 log!("Score live on NEAR!");
             }
         }
+        let outcome: bool = true;
+        return outcome
     }
 
 
@@ -97,7 +99,7 @@ impl Contract {
 
         let pedigree = self.records.get(&account_id);
         match pedigree {
-            None => {env::panic_str("No credit scores for thsi user");}
+            None => {env::panic_str("No credit scores for this user");}
             Some(z) => {
                 let mut record = vec![];
                 for x in z.iter() {
