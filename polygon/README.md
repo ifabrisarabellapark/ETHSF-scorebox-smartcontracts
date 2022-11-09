@@ -1,4 +1,9 @@
+# :rocket: ScoreBox Contract | Polygon
+This is a smart contract written in Solidity and deployed on Polygon testnet (Mumbai), which can store users' credit scores and return them from free when queried.
+___
+
 ### Core functions
+Notice the first is a payable function, whereas the second is just a viewing function
 ```bash
     #save scores
     function uploadScore(
@@ -21,18 +26,22 @@ npm install @openzeppelin/contracts
 ```
 
 ### Test & compile
-With Brownie
+You need Brownie, so install it. </br>
+Good alternatives are HardHat and Truffle, but both are JS based.
 ```bash
 pip install eth-brownie
 ```
 
 ### Deploy
+Using Brownie
 ```bash
+brownie compile
 brownie run deploy.py --network polygon-test
 ```
 
 
 ### Interact
+Run from terminal
 ```bash
 # import accounts
 brownie accounts list
