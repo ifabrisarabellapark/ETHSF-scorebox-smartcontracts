@@ -1,6 +1,6 @@
 # :rocket: ScoreBox Contract | NEAR
 
-The smart contract exposes two methods to enable storing and retrieving a greeting in the NEAR network.
+The smart contract exposes two methods to enable storing and retrieving credit scores from the NEAR network.
 
 ---
 
@@ -15,7 +15,7 @@ Function call
         description: String,
         beneficiary: AccountId,
         amount: Balance
-        ) { ... }
+        ) -> bool { ... }
 ```
 
 View call
@@ -40,4 +40,10 @@ Compile and deploy
 export a=ethsf.testnet
 yarn build && near deploy --wasmFile res/contract.wasm --accountId $a
 near call $a init '{"owner_id": "ethsf.testnet"}' --accountId $a
+```
+
+Interact
+```bash
+near call $a upload_score '{"score": 371, "description": "Congrats! 371 points.", "beneficiary": "ethsf.testnet", "amount":1}' --accountId $a
+near view $a get_scores '{"account_id": "'$a'"}' --accountId $a
 ```

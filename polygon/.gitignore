@@ -17,3 +17,4 @@ artifacts/
 
 # Hardhat nodes
 /node_modules
+.hypothesis/

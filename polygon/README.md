@@ -1,5 +1,5 @@
 # :rocket: ScoreBox Contract | Polygon
-This is a smart contract written in Solidity and deployed on Polygon testnet (Mumbai), which can store users' credit scores and return them from free when queried.
+This is a smart contract written in Solidity and deployed on Polygon testnet (Mumbai), which can store users' credit scores and return them for free when queried using a view call.
 ___
 
 ### Core functions
@@ -62,5 +62,6 @@ brownie console --network polygon-test
     sc.userCount()                                                   
     sc.uploadScore(501, 'Yo!', nene, 3, {'from':josi, 'value': 3}) 
     sc.getScore(josi, {'from': josi})                                  
-    ```
+```
+
 > `nene` and `josi` are an alias
