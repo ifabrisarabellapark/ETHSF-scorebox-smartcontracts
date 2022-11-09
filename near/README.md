@@ -1,9 +1,8 @@
-# :rocket: ScoreBox Contract 
+# :rocket: ScoreBox Contract | NEAR
 
 The smart contract exposes two methods to enable storing and retrieving a greeting in the NEAR network.
 
-
-<br />
+---
 
 
 ### Functions
